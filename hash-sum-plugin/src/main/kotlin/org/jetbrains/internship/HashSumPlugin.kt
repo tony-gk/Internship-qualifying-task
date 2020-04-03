@@ -11,12 +11,14 @@ import java.security.MessageDigest
 import java.util.*
 import java.util.stream.Collectors
 
-private const val HASH_ALGORITHM = "SHA-1"
-private const val TASK_NAME = "calculateSha1"
-private const val OUTPUT_DIR_NAME = "hashsum-plugin"
-private const val OUTPUT_FILE_NAME = "hashsum"
 
 class HashSumPlugin : Plugin<Project> {
+    companion object {
+        const val HASH_ALGORITHM = "SHA-1"
+        const val TASK_NAME = "calculateSha1"
+        const val OUTPUT_DIR_NAME = "hashsum-plugin"
+        const val OUTPUT_FILE_NAME = "hashsum"
+    }
 
     override fun apply(project: Project) {
         project.tasks.create(TASK_NAME) {
