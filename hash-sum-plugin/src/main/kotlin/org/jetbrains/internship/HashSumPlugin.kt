@@ -8,6 +8,8 @@ import java.io.SequenceInputStream
 import java.nio.file.Files
 import java.security.DigestInputStream
 import java.security.MessageDigest
+import java.util.*
+import java.util.stream.Collectors
 
 class HashSumPlugin : Plugin<Project> {
 
@@ -38,12 +40,12 @@ class HashSumPlugin : Plugin<Project> {
 
     private fun getFilesInputStream(p: Project): InputStream? {
         val filePattern = PatternSet().include("**/*.java", "**/*.kt")
-        return p.fileTree(p.projectDir)
+        val inputStreamList = p.fileTree(p.projectDir)
             .matching(filePattern)
             .files.stream()
             .map { Files.newInputStream(it.toPath()) }
-            .reduce { is1, is2 -> SequenceInputStream(is1, is2) }
-            .get()
+            .collect(Collectors.toList())
+        return SequenceInputStream(Collections.enumeration(inputStreamList))
     }
 
     private fun ByteArray.toHexString(): String {
