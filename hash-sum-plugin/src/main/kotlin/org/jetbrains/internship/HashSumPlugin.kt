@@ -11,17 +11,41 @@ import java.security.MessageDigest
 import java.util.*
 import java.util.stream.Collectors
 
+private const val HASH_ALGORITHM = "SHA-1"
+private const val TASK_NAME = "calculateSha1"
+private const val OUTPUT_DIR_NAME = "hashsum-plugin"
+private const val OUTPUT_FILE_NAME = "hashsum"
+
 class HashSumPlugin : Plugin<Project> {
 
-    override fun apply(p0: Project) {
-        p0.tasks.create("calculateSha1") {
-            p0.allprojects.stream().forEach { calculateSha1(it) }
+    override fun apply(project: Project) {
+        project.tasks.create(TASK_NAME) {
+        }
+
+        project.tasks.findByName(TASK_NAME)!!.doFirst {
+            project.allprojects.stream().forEach { calculateSha1(it) }
         }
     }
 
-    private fun calculateSha1(p: Project) {
-        val md = MessageDigest.getInstance("SHA-1")
-        val dis = DigestInputStream(getFilesInputStream(p), md)
+    private fun calculateSha1(project: Project) {
+        val digest = calculateDigest(getFilesInputStream(project))
+        writeDigest(project, digest)
+    }
+
+    private fun writeDigest(project: Project, digest: String) {
+        val buildDirPath = project.buildDir.toPath()
+
+        Files.createDirectories(buildDirPath.resolve(OUTPUT_DIR_NAME))
+
+        Files.writeString(
+            buildDirPath.resolve(OUTPUT_DIR_NAME).resolve(OUTPUT_FILE_NAME),
+            digest
+        )
+    }
+
+    private fun calculateDigest(filesInputStream: InputStream): String {
+        val messageDigest = MessageDigest.getInstance(HASH_ALGORITHM)
+        val dis = DigestInputStream(filesInputStream, messageDigest)
 
         dis.use {
             val buffer = ByteArray(256 * 1024)
@@ -30,15 +54,10 @@ class HashSumPlugin : Plugin<Project> {
             }
         }
 
-        val digest = dis.messageDigest.digest().toHexString()
-
-        if (!Files.exists(p.buildDir.toPath())) {
-            Files.createDirectory(p.buildDir.toPath())
-        }
-        Files.writeString(p.buildDir.resolve("hash-sum-plugin").toPath(), digest)
+        return dis.messageDigest.digest().toHexString()
     }
 
-    private fun getFilesInputStream(p: Project): InputStream? {
+    private fun getFilesInputStream(p: Project): InputStream {
         val filePattern = PatternSet().include("**/*.java", "**/*.kt")
         val inputStreamList = p.fileTree(p.projectDir)
             .matching(filePattern)
