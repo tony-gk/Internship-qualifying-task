@@ -14,7 +14,7 @@ import java.util.*
 import java.util.stream.Collectors
 
 private const val EXTENSION_NAME = "hashsum"
-private const val TASK_NAME = "calculateSha1"
+private const val TASK_NAME = "calculateHash"
 private const val OUTPUT_DIR_NAME = "hashsum-plugin"
 private const val OUTPUT_FILE_NAME = "hashsum"
 
