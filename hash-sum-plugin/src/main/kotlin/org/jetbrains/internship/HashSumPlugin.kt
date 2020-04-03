@@ -13,12 +13,14 @@ import java.security.NoSuchAlgorithmException
 import java.util.*
 import java.util.stream.Collectors
 
-private const val EXTENSION_NAME = "hashsum"
-private const val TASK_NAME = "calculateHash"
-private const val OUTPUT_DIR_NAME = "hashsum-plugin"
-private const val OUTPUT_FILE_NAME = "hashsum"
 
 class HashSumPlugin : Plugin<Project> {
+    companion object {
+        const val EXTENSION_NAME = "hashsum"
+        const val TASK_NAME = "calculateHash"
+        const val OUTPUT_DIR_NAME = "hashsum-plugin"
+        const val OUTPUT_FILE_NAME = "hashsum"
+    }
 
     override fun apply(project: Project) {
         with(project) {
