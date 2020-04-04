@@ -5,3 +5,15 @@ plugins {
 repositories {
     jcenter()
 }
+
+buildscript {
+    dependencies {
+        classpath("org.jetbrains:hash-sum-plugin:1.1")
+    }
+}
+
+apply(plugin = "org.jetbrains.internship")
+
+configure<org.jetbrains.internship.HashSumExtension> {
+    algorithm = "SHA-512"
+}
