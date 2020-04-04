@@ -12,7 +12,7 @@ import java.io.File
 class HashSumPluginTest {
     companion object {
         val HASH_FILE_PATH: String
-            get() = "hashsum-plugin${File.separator}hashsum"
+            get() = "hash-sum-plugin${File.separator}hash-sum"
         const val CALCULATE_HASH_TASK_NAME = "calculateHash"
         const val EXTENSION_NAME = "hashsum"
 
