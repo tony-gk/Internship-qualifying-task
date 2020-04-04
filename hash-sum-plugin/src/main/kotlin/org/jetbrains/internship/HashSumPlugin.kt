@@ -33,13 +33,13 @@ class HashSumPlugin : Plugin<Project> {
             }
 
             tasks.findByName(TASK_NAME)!!.doFirst {
-                allprojects.stream().forEach { calculateSha1(it, extension.algorithm) }
+                allprojects.stream().forEach { calculateHash(it, extension.algorithm) }
             }
         }
 
     }
 
-    private fun calculateSha1(project: Project, algorithm: String) {
+    private fun calculateHash(project: Project, algorithm: String) {
         val digest = calculateDigest(getFilesInputStream(project), getMessageDigest(algorithm))
         writeDigest(project, digest)
     }
