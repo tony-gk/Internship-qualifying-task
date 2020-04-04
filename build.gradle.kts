@@ -8,7 +8,7 @@ repositories {
 
 buildscript {
     dependencies {
-        classpath("org.jetbrains:hash-sum-plugin:1.1")
+        classpath("org.jetbrains:hash-sum-plugin:1.2")
     }
 }
 

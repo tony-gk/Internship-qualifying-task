@@ -11,9 +11,10 @@ import java.io.File
 
 class HashSumPluginTest {
     companion object {
-        val HASH_FILE_PATH: String
-            get() = "hash-sum-plugin${File.separator}hash-sum"
+        val HASH_FILE_PATH: String = "hash-sum-plugin${File.separator}hash-sum"
+
         const val CALCULATE_HASH_TASK_NAME = "calculateHash"
+
         const val EXTENSION_NAME = "hashsum"
 
         val String.isSHA1Content: Boolean
@@ -62,17 +63,16 @@ class HashSumPluginTest {
     }
 
     @Test
-    fun defaultAlgorithmTest() {
+    fun defaultAlgorithmTest() = project.afterEvaluate {
         val calculateHashTask = project.tasks.findByPath(CALCULATE_HASH_TASK_NAME)
         assertNotNull(calculateHashTask)
-
         runTask(calculateHashTask!!)
         val hashSumFile = project.buildDir.resolve(HASH_FILE_PATH)
         assertTrue(hashSumFile.exists() && hashSumFile.readText().isSHA1Content)
     }
 
     @Test
-    fun variousAlgorithmsTest() {
+    fun variousAlgorithmsTest() = project.afterEvaluate {
         val calculateHashTask = project.tasks.findByPath(CALCULATE_HASH_TASK_NAME)!!
         val hashSumFile = project.buildDir.resolve(HASH_FILE_PATH)
 
@@ -90,6 +90,7 @@ class HashSumPluginTest {
                 digest.matches(hashRegex)
             )
         }
+
     }
 
 }

@@ -1,6 +1,7 @@
 package org.jetbrains.internship
 
-open class HashSumExtension {
-    var algorithm : String = "SHA-1"
-}
+import javax.inject.Inject
+
+open class HashSumExtension
+@Inject constructor(var algorithm: String = "")
 

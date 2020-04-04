@@ -19,7 +19,7 @@ publishing {
         create<MavenPublication>("pluginPublication") {
             groupId = "org.jetbrains"
             artifactId = "hash-sum-plugin"
-            version = "1.1"
+            version = "1.2"
             from(components["java"])
         }
     }
