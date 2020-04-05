@@ -19,8 +19,8 @@ class HashSumPlugin : Plugin<Project> {
                 DEFAULT_ALGORITHM
             )
 
-            afterEvaluate {
-                tasks.register(TASK_NAME, CalculateHashTask::class.java, extension.algorithm)
+            tasks.register(TASK_NAME, CalculateHashTask::class.java) {
+                algorithm = extension.algorithm
             }
         }
 

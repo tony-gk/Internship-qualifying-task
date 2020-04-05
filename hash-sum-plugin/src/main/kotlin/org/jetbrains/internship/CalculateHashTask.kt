@@ -2,18 +2,26 @@ package org.jetbrains.internship
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserDataException
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileTree
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileCollection
+import org.gradle.api.file.FileTree
+import org.gradle.api.tasks.*
+import org.gradle.work.ChangeType
+import org.gradle.work.Incremental
+import org.gradle.work.InputChanges
 import org.gradle.workers.WorkerExecutor
+import java.io.File
 import java.nio.file.Files
 import javax.inject.Inject
 
 @Suppress("UnstableApiUsage")
 open class CalculateHashTask
-@Inject constructor(
-    private val algorithm: String,
-    private val workerExecutor: WorkerExecutor
-) : DefaultTask() {
+@Inject constructor(private val workerExecutor: WorkerExecutor) : DefaultTask() {
+
+    @get:Input
+    var algorithm: String = ""
 
     companion object {
         const val OUTPUT_DIR_NAME = "hash-sum-plugin"
@@ -28,7 +36,8 @@ open class CalculateHashTask
     private fun checkAlgorithm() {
         if (!SUPPORTED_ALGORITHMS.contains(algorithm)) {
             throw InvalidUserDataException(
-                "Please select one of the following hash algorithms: "
+                "Unknown algorithm: $algorithm\n" +
+                        "Please select one of the following hash algorithms: "
                         + SUPPORTED_ALGORITHMS.joinToString((", "))
             )
         }
@@ -37,7 +46,6 @@ open class CalculateHashTask
     @TaskAction
     fun calculateHash() {
         checkAlgorithm()
-
         val workQueue = workerExecutor.noIsolation()
 
         project.allprojects.forEach { p ->
@@ -48,6 +56,7 @@ open class CalculateHashTask
                 outputFile.set(outputDirectory.resolve(OUTPUT_FILE_NAME).toFile())
                 projectDirectory.set(p.projectDir)
                 hashAlgorithm.set(algorithm)
+                projectName.set(p.name)
             }
         }
     }
