@@ -11,5 +11,6 @@ import org.gradle.workers.WorkParameters
 interface CalculateHashParameters : WorkParameters {
     val projectDirectory: DirectoryProperty
     val outputFile : RegularFileProperty
+    val projectName : Property<String>
     val hashAlgorithm: Property<String>
 }

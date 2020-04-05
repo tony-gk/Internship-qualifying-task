@@ -18,6 +18,8 @@ abstract class CalculateHashAction : WorkAction<CalculateHashParameters> {
 
         val digest = calculateDigest(getFilesInputStream(fileTree), algorithm)
         outputFile.writeText(digest)
+
+        println("Hash of files in project '${parameters.projectName.get()}' calculated")
     }
 
     private fun calculateDigest(filesInputStream: InputStream, algorithm: String): String {
