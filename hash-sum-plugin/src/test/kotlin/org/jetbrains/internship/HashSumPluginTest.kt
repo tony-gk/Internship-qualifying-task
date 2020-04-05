@@ -11,14 +11,11 @@ import java.io.File
 
 class HashSumPluginTest {
     companion object {
-        val HASH_FILE_PATH: String = "hash-sum-plugin${File.separator}hash-sum"
-
         const val CALCULATE_HASH_TASK_NAME = "calculateHash"
 
         const val EXTENSION_NAME = "hashsum"
 
-        val String.isSHA1Content: Boolean
-            get() = matches("^[a-fA-F0-9]{40}$".toRegex())
+        const val DEFAULT_ALGORITHM = "SHA-1"
 
         val hashDigestLengthMap: Map<String, Int>
             get() = mapOf(
@@ -32,6 +29,8 @@ class HashSumPluginTest {
         File(System.getProperty("user.dir")).parentFile.resolve("example-project")
 
     private val project: Project = ProjectBuilder.builder().withProjectDir(exampleProjectDir).build()
+
+    private fun getHashFileName(algorithm: String) = "hash-sum-plugin/hash-sum.$algorithm"
 
     private fun runTask(task: Task) {
         task.actions.forEach {
@@ -63,30 +62,33 @@ class HashSumPluginTest {
     }
 
     @Test
-    fun defaultAlgorithmTest() = project.afterEvaluate {
+    fun defaultAlgorithmTest() {
         val calculateHashTask = project.tasks.findByPath(CALCULATE_HASH_TASK_NAME)
         assertNotNull(calculateHashTask)
         runTask(calculateHashTask!!)
-        val hashSumFile = project.buildDir.resolve(HASH_FILE_PATH)
-        assertTrue(hashSumFile.exists() && hashSumFile.readText().isSHA1Content)
+        val hashSumFile = project.buildDir.resolve(getHashFileName(DEFAULT_ALGORITHM))
+        assertTrue(
+            hashSumFile.exists()
+                    && hashSumFile.readText().matches(getHashRegex(hashDigestLengthMap.getValue(DEFAULT_ALGORITHM)))
+        )
     }
 
     @Test
-    fun variousAlgorithmsTest() = project.afterEvaluate {
+    fun variousAlgorithmsTest() {
         val calculateHashTask = project.tasks.findByPath(CALCULATE_HASH_TASK_NAME)!!
-        val hashSumFile = project.buildDir.resolve(HASH_FILE_PATH)
 
         val extension = project.extensions.getByName(EXTENSION_NAME) as HashSumExtension
 
-        for ((name, length) in hashDigestLengthMap) {
-            val hashRegex = getHashRegex(length / 4)
+        for ((algorithmName, digestLength) in hashDigestLengthMap) {
+            val hashRegex = getHashRegex(digestLength / 4)
 
-            extension.algorithm = name
+            extension.algorithm = algorithmName
             runTask(calculateHashTask)
 
+            val hashSumFile = project.buildDir.resolve(getHashFileName(algorithmName))
             val digest = hashSumFile.readText()
             assertTrue(
-                "Digest doesn't match regex\nAlgorithm: $name\n Digest: $digest",
+                "Digest doesn't match regex\nAlgorithm: $algorithmName\n Digest: $digest",
                 digest.matches(hashRegex)
             )
         }
