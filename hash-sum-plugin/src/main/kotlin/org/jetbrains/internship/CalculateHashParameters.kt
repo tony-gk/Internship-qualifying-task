@@ -10,7 +10,7 @@ import org.gradle.workers.WorkParameters
 @Suppress("UnstableApiUsage")
 interface CalculateHashParameters : WorkParameters {
     val projectDirectory: DirectoryProperty
-    val outputFile : RegularFileProperty
-    val projectName : Property<String>
+    val outputFile: RegularFileProperty
+    val projectName: Property<String>
     val hashAlgorithm: Property<String>
 }

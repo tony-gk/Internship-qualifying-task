@@ -39,7 +39,7 @@ abstract class CalculateHashAction : WorkAction<CalculateHashParameters> {
         val filePattern = PatternSet().include("**/*.java", "**/*.kt")
         val inputStreamList = files
             .matching(filePattern)
-            .map { it.inputStream()}
+            .map { it.inputStream() }
             .toMutableList()
         return SequenceInputStream(Collections.enumeration(inputStreamList))
     }
